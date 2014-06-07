@@ -7,6 +7,26 @@ local function resetPads()
 	padright = { x = w - padw, y = py, w = padw, h = padh }
 end
 
+local function clamp(v, l, r)
+	if v > r then
+		return r
+	elseif v < l then
+		return l
+	else
+		return v
+	end
+end
+
+local function handleKeyboard(v, pos, neg, sc, dt)
+	if love.keyboard.isDown(neg) then
+		return v - sc * dt
+	elseif love.keyboard.isDown(pos) then
+		return v + sc * dt
+	else
+		return v
+	end
+end
+
 function love.load()
 	resetPads()
 end
