@@ -1,8 +1,8 @@
-
 local function resetPads()
-	local w, h = love.window.getDimensions()
+	w, h = love.window.getDimensions()
 	local padw, padh = 30, 120
 	local py = h/2 - padh/2
+	yspeed = 300;
 	padleft = { x = 0, y = py, w = padw, h = padh }
 	padright = { x = w - padw, y = py, w = padw, h = padh }
 end
@@ -32,16 +32,10 @@ function love.load()
 end
 
 function love.update(dt)
-	if love.keyboard.isDown("up") then
-		padleft.y = padleft.y - 100 * dt
-	elseif love.keyboard.isDown("down") then
-		padleft.y = padleft.y + 100 * dt
-	end
-	if love.keyboard.isDown("w") then
-		padright.y = padright.y - 100 * dt
-	elseif love.keyboard.isDown("r") then
-		padright.y = padright.y + 100 * dt
-	end
+	padleft.y = handleKeyboard(padleft.y, "down", "up", yspeed, dt);
+	padright.y = handleKeyboard(padright.y, "r", "w", yspeed, dt);
+	padleft.y = clamp(padleft.y, 0, h - padleft.h);
+	padright.y = clamp(padright.y, 0, h - padright.h);
 end
 
 function love.draw()
