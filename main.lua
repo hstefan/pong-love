@@ -45,6 +45,8 @@ end
 
 function love.load()
 	math.randomseed(os.time())
+	love.graphics.setNewFont("data/slkscre.ttf", 64)
+	score = { 0, 0 }
 	resetPads()
 end
 
@@ -59,6 +61,11 @@ function love.update(dt)
 
 	if nx < ball.rad or nx > w - ball.rad then
 		resetPads()
+		if nx < ball.rad then
+			score[2] = score[2] + 1;
+		else
+			score[1] = score[1] + 1;
+		end
 		return
 	end
 	if nx < ball.rad or nx > w - ball.rad or intersect(nball, padleft) or intersect(nball, padright) then
@@ -74,6 +81,10 @@ function love.update(dt)
 end
 
 function love.draw()
+	local sct = { string.format("%d", score[1]), string.format("%d", score[2]) }
+	local f = love.graphics.getFont()
+	love.graphics.print(sct[1], w/2 - f:getWidth(sct[1]), 10)
+	love.graphics.print(sct[2], w/2 + f:getWidth(sct[2]), 10)
 	love.graphics.rectangle("fill", padleft.x, padleft.y, padleft.w, padleft.h)
 	love.graphics.rectangle("fill", padright.x, padright.y, padright.w, padright.h)
 	love.graphics.circle("fill", ball.x, ball.y, ball.rad, 30)
