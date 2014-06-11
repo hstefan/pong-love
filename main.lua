@@ -2,11 +2,11 @@ local function resetPads()
 	w, h = love.window.getDimensions()
 	local padw, padh = 30, 120
 	local py = h/2 - padh/2
-	yspeed = 450;
+	yspeed = 650;
 	s = { 0.707, -0.707 }
 	padleft = { x = 0, y = py, w = padw, h = padh }
 	padright = { x = w - padw, y = py, w = padw, h = padh }
-	ball = { x = w/2, y = h/2, rad = 10, vx = s[math.random(2)], vy = s[math.random(2)], sc = 300 }
+	ball = { x = w/2, y = h/2, rad = 10, vx = s[math.random(2)], vy = s[math.random(2)], sc = 600 }
 end
 
 local function clamp(v, l, r)
