@@ -32,15 +32,21 @@ local function pointInRectangle(r, p)
 	return p.x >= r.x and p.x <= r.x + r.w and p.y >= r.y and p.y <= r.y + r.h
 end
 
-local function intersect(ball, pad)
-	local cpts = { { x = ball.x + ball.rad, y = ball.y }, { x = ball.x - ball.rad, y = ball.y },
-		{ x = ball.x, y = ball.y + ball.rad}, { x = ball.x, y = ball.y - ball.rad } }
+local function anyInRect(rect, cpts) 
 	for k, p in ipairs(cpts) do
-		if pointInRectangle(pad, p) then
+		if pointInRectangle(rect, p) then
 			return true
 		end
 	end
 	return false
+end
+
+local function intersectSides(ball, pad)
+	return anyInRect(pad, { { x = ball.x + ball.rad, y = ball.y }, { x = ball.x - ball.rad, y = ball.y } })
+end
+
+local function intersectCaps(ball, pad)
+	return anyInRect(pad, { { x = ball.x, y = ball.y + ball.rad}, { x = ball.x, y = ball.y - ball.rad } })
 end
 
 function love.load()
@@ -68,15 +74,22 @@ function love.update(dt)
 		end
 		return
 	end
-	if nx < ball.rad or nx > w - ball.rad or intersect(nball, padleft) or intersect(nball, padright) then
+	if intersectSides(nball, padleft) or intersectSides(nball, padright) then
 		ball.vx = -ball.vx
-	else
-		ball.x = nx
-	end
-	if ny < ball.rad or ny > h - ball.rad then
+	elseif intersectCaps(nball, padleft) or intersectCaps(nball, padright) then
+		ball.vx = -ball.vx
 		ball.vy = -ball.vy
 	else
-		ball.y = ny
+		if nx < ball.rad or nx > w - ball.rad then
+			ball.vx = -ball.vx
+		else
+			ball.x = nx
+		end
+		if ny < ball.rad or ny > h - ball.rad then
+			ball.vy = -ball.vy
+		else
+			ball.y = ny
+		end
 	end
 end
 
