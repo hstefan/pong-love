@@ -2,7 +2,7 @@ local function resetPads()
 	w, h = love.window.getDimensions()
 	local padw, padh = 30, 120
 	local py = h/2 - padh/2
-	yspeed = 650;
+	padySpeed = 650;
 	s = { 0.707, -0.707 }
 	padleft = { x = 0, y = py, w = padw, h = padh }
 	padright = { x = w - padw, y = py, w = padw, h = padh }
@@ -28,6 +28,16 @@ local function handleKeyboard(v, pos, neg, sc, dt)
 		return v
 	end
 end
+
+local function handleJoystick(device, v, sc, dt)
+	local axis = device:getAxis(2)
+	if math.abs(axis) < 0.4 then
+		return v
+	else
+		return v + (axis * dt * sc)
+	end
+end
+
 local function pointInRectangle(r, p)
 	return p.x >= r.x and p.x <= r.x + r.w and p.y >= r.y and p.y <= r.y + r.h
 end
@@ -49,16 +59,26 @@ local function intersectCaps(ball, pad)
 	return anyInRect(pad, { { x = ball.x, y = ball.y + ball.rad}, { x = ball.x, y = ball.y - ball.rad } })
 end
 
+local function setupInputMethods()
+	padHandlers = { function(y, spd, dt) return handleKeyboard(y, "down", "up", spd, dt) end,
+		function(y, spd, dt) return handleKeyboard(y, "r", "w", spd, dt) end }
+	joysticks = love.joystick.getJoysticks()
+	for k, v in ipairs(joysticks) do
+		padHandlers[k] = function(y, spd, dt) return handleJoystick(joysticks[k], y, spd, dt) end
+	end
+end
+
 function love.load()
 	math.randomseed(os.time())
 	love.graphics.setNewFont("data/slkscre.ttf", 64)
 	score = { 0, 0 }
 	resetPads()
+	setupInputMethods()
 end
 
 function love.update(dt)
-	padleft.y = handleKeyboard(padleft.y, "down", "up", yspeed, dt);
-	padright.y = handleKeyboard(padright.y, "r", "w", yspeed, dt);
+	padleft.y = padHandlers[1](padleft.y, padySpeed, dt)
+	padright.y = padHandlers[2](padright.y, padySpeed, dt)
 	padleft.y = clamp(padleft.y, 0, h - padleft.h)
 	padright.y = clamp(padright.y, 0, h - padright.h)
 
