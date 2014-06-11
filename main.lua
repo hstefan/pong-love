@@ -94,11 +94,11 @@ function love.update(dt)
 		end
 		return
 	end
-	if intersectSides(nball, padleft) or intersectSides(nball, padright) then
-		ball.vx = -ball.vx
-	elseif intersectCaps(nball, padleft) or intersectCaps(nball, padright) then
+	if intersectCaps(nball, padleft) or intersectCaps(nball, padright) then
 		ball.vx = -ball.vx
 		ball.vy = -ball.vy
+	elseif intersectSides(nball, padleft) or intersectSides(nball, padright) then
+		ball.vx = -ball.vx
 	else
 		if nx < ball.rad or nx > w - ball.rad then
 			ball.vx = -ball.vx
