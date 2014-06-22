@@ -9,14 +9,19 @@ local function initBall()
 	ball.speed = 400
 end
 
+local function initPaddle(paddle, offset)
+	paddle.size = vector(30, 120)
+	paddle.pos = vector(0, h / 2 - paddle.size.y / 2) + offset
+	paddle.maxSpeed = 400
+end
+
 local function resetPads()
 	w, h = love.window.getDimensions()
 	initBall()
-	local padw, padh = 30, 120
-	local py = h/2 - padh/2
-	padySpeed = 650;
-	padleft = { x = 0, y = py, w = padw, h = padh }
-	padright = { x = w - padw, y = py, w = padw, h = padh }
+	padleft = {}
+	padright = {}
+	initPaddle(padleft, vector(0, 0))
+	initPaddle(padright, vector(w - 30, 0))
 end
 
 local function clamp(v, l, r)
@@ -68,7 +73,9 @@ end
 local function updateBall(dt)
 	ball.pos = ball.pos + dt * ball.speed * ball.dir
 	local ballRect = { x = ball.pos.x, y = ball.pos.y, w = ball.size.x, h = ball.size.y }
-	if #(sh.rectInRect(padleft, ballRect)) > 0 or #(sh.rectInRect(padright, ballRect)) > 0 then
+	local leftPaddleRect = { x = padleft.pos.x, y = padleft.pos.y, w = padleft.size.x, h = padleft.size.y }
+	local rightPaddleRect = { x = padright.pos.x, y = padright.pos.y, w = padright.size.x, h = padright.size.y }
+	if #(sh.rectInRect(leftPaddleRect, ballRect)) > 0 or #(sh.rectInRect(rightPaddleRect, ballRect)) > 0 then
 		ball.dir.x = -ball.dir.x
 	else
 		if ball.pos.y < 0 or ball.pos.y > h - ball.size.y then
@@ -89,10 +96,10 @@ local function updateScore()
 end
 
 function love.update(dt)
-	padleft.y = padHandlers[1](padleft.y, padySpeed, dt)
-	padright.y = padHandlers[2](padright.y, padySpeed, dt)
-	padleft.y = clamp(padleft.y, 0, h - padleft.h)
-	padright.y = clamp(padright.y, 0, h - padright.h)
+	padleft.pos.y = padHandlers[1](padleft.pos.y, padleft.maxSpeed, dt)
+	padright.pos.y = padHandlers[2](padright.pos.y, padleft.maxSpeed, dt)
+	padleft.pos.y = clamp(padleft.pos.y, 0, h - padleft.size.y)
+	padright.pos.y = clamp(padright.pos.y, 0, h - padright.size.y)
 	updateBall(dt)
 	updateScore()
 end
@@ -102,7 +109,7 @@ function love.draw()
 	local f = love.graphics.getFont()
 	love.graphics.print(sct[1], w/2 - f:getWidth(sct[1]), 10)
 	love.graphics.print(sct[2], w/2 + f:getWidth(sct[2]), 10)
-	love.graphics.rectangle("fill", padleft.x, padleft.y, padleft.w, padleft.h)
-	love.graphics.rectangle("fill", padright.x, padright.y, padright.w, padright.h)
+	love.graphics.rectangle("fill", padleft.pos.x, padleft.pos.y, padleft.size.x, padleft.size.y)
+	love.graphics.rectangle("fill", padright.pos.x, padright.pos.y, padright.size.x, padright.size.y)
 	love.graphics.rectangle("fill", ball.pos.x, ball.pos.y, ball.size.x, ball.size.y)
 end
