@@ -1,14 +1,22 @@
-sh = require "shapes"
+local sh = require "shapes"
+local vector = require "hump.vector"
+
+local function initBall() 
+	ball = {}
+	ball.size = vector(20, 20)
+	ball.pos = vector(w/2 - ball.size.x/2, h/2 - ball.size.y/2)
+	ball.dir = vector(math.random(2), math.random(2)):normalize_inplace()
+	ball.speed = 400
+end
 
 local function resetPads()
 	w, h = love.window.getDimensions()
+	initBall()
 	local padw, padh = 30, 120
 	local py = h/2 - padh/2
 	padySpeed = 650;
-	s = { 0.707, -0.707 }
 	padleft = { x = 0, y = py, w = padw, h = padh }
 	padright = { x = w - padw, y = py, w = padw, h = padh }
-	ball = { x = w/2 - 10, y = h/2 - 10, w = 20, h = 20, vx = s[math.random(2)], vy = s[math.random(2)], sc = 600 }
 end
 
 local function clamp(v, l, r)
@@ -57,38 +65,36 @@ function love.load()
 	setupInputMethods()
 end
 
+local function updateBall(dt)
+	ball.pos = ball.pos + dt * ball.speed * ball.dir
+	local ballRect = { x = ball.pos.x, y = ball.pos.y, w = ball.size.x, h = ball.size.y }
+	if #(sh.rectInRect(padleft, ballRect)) > 0 or #(sh.rectInRect(padright, ballRect)) > 0 then
+		ball.dir.x = -ball.dir.x
+	else
+		if ball.pos.y < 0 or ball.pos.y > h - ball.size.y then
+			ball.dir.y = -ball.dir.y
+		end
+	end
+end
+
+local function updateScore()
+	if ball.pos.x < 0 or ball.pos.x > w - ball.size.x then
+		if ball.pos.x < 0 then
+			score[2] = score[2] + 1;
+		else
+			score[1] = score[1] + 1;
+		end
+		resetPads()
+	end
+end
+
 function love.update(dt)
 	padleft.y = padHandlers[1](padleft.y, padySpeed, dt)
 	padright.y = padHandlers[2](padright.y, padySpeed, dt)
 	padleft.y = clamp(padleft.y, 0, h - padleft.h)
 	padright.y = clamp(padright.y, 0, h - padright.h)
-
-	local nx, ny = ball.x + ball.vx * ball.sc * dt, ball.y + ball.vy * ball.sc * dt
-	local nball = { x = nx, y = ny, w = ball.w, h = ball.h }
-
-	if nx < ball.w or nx > w - ball.w then
-		resetPads()
-		if nx < ball.w then
-			score[2] = score[2] + 1;
-		else
-			score[1] = score[1] + 1;
-		end
-		return
-	end
-	if #(sh.rectInRect(padleft, nball)) > 0 or #(sh.rectInRect(padright, nball)) > 0 then
-		ball.vx = -ball.vx
-	else
-		if nx < ball.w or nx > w - ball.w then
-			ball.vx = -ball.vx
-		else
-			ball.x = nx
-		end
-		if ny < ball.h or ny > h - ball.h then
-			ball.vy = -ball.vy
-		else
-			ball.y = ny
-		end
-	end
+	updateBall(dt)
+	updateScore()
 end
 
 function love.draw()
@@ -98,5 +104,5 @@ function love.draw()
 	love.graphics.print(sct[2], w/2 + f:getWidth(sct[2]), 10)
 	love.graphics.rectangle("fill", padleft.x, padleft.y, padleft.w, padleft.h)
 	love.graphics.rectangle("fill", padright.x, padright.y, padright.w, padright.h)
-	love.graphics.rectangle("fill", ball.x, ball.y, ball.w, ball.h)
+	love.graphics.rectangle("fill", ball.pos.x, ball.pos.y, ball.size.x, ball.size.y)
 end
