@@ -77,10 +77,8 @@ local function updateBall(dt)
 	local rightPaddleRect = { x = padright.pos.x, y = padright.pos.y, w = padright.size.x, h = padright.size.y }
 	if #(sh.rectInRect(leftPaddleRect, ballRect)) > 0 or #(sh.rectInRect(rightPaddleRect, ballRect)) > 0 then
 		ball.dir.x = -ball.dir.x
-	else
-		if ball.pos.y < 0 or ball.pos.y > h - ball.size.y then
+	elseif ball.pos.y < 0 or ball.pos.y > h - ball.size.y then
 			ball.dir.y = -ball.dir.y
-		end
 	end
 end
 
