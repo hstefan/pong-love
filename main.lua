@@ -7,7 +7,7 @@ local function initBall()
 	ball.size = vector(20, 20)
 	ball.pos = vector(w/2 - ball.size.x/2, h/2 - ball.size.y/2)
 	ball.dir = vector(vels[math.random(2)], vels[math.random(2)]):normalize_inplace()
-	ball.speed = 400
+	ball.speed = 700
 end
 
 local function initPaddle(paddle, offset)
