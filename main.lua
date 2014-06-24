@@ -72,16 +72,31 @@ function love.load()
 	setupInputMethods()
 end
 
+function reflectedDir(paddle)
+	local mul = -1
+	local yBallOrig = ball.pos.y - paddle.pos.y
+	local yRel = clamp(yBallOrig/paddle.size.y - 0.5, -0.5, 0.5)
+	mul = mul - yRel
+	return vector(mul * ball.dir.x, ball.dir.y):normalize_inplace()
+end
+
 local function updateBall(dt)
-	ball.pos = ball.pos + dt * ball.speed * ball.dir
 	local ballRect = { x = ball.pos.x, y = ball.pos.y, w = ball.size.x, h = ball.size.y }
 	local leftPaddleRect = { x = padleft.pos.x, y = padleft.pos.y, w = padleft.size.x, h = padleft.size.y }
 	local rightPaddleRect = { x = padright.pos.x, y = padright.pos.y, w = padright.size.x, h = padright.size.y }
-	if #(sh.rectInRect(leftPaddleRect, ballRect)) > 0 or #(sh.rectInRect(rightPaddleRect, ballRect)) > 0 then
-		ball.dir.x = -ball.dir.x
+	if #(sh.rectInRect(leftPaddleRect, ballRect)) > 0 then
+		ball.dir = reflectedDir(padleft)
+		local rightBorder = leftPaddleRect.x + 1.05 * leftPaddleRect.w
+		ball.pos.x = ball.pos.x + (rightBorder - ball.pos.x)
+	elseif #(sh.rectInRect(rightPaddleRect, ballRect)) > 0 then
+		ball.dir = reflectedDir(padright)
+		local rightSideBall = ball.pos.x + ball.size.x
+		local leftPaddleBorder = rightPaddleRect.x - rightPaddleRect.w * 0.05
+		ball.pos.x = ball.pos.x - (rightSideBall - leftPaddleBorder)
 	elseif ball.pos.y < 0 or ball.pos.y > h - ball.size.y then
-			ball.dir.y = -ball.dir.y
+		ball.dir.y = -ball.dir.y
 	end
+	ball.pos = ball.pos + dt * ball.speed * ball.dir
 end
 
 local function updateScore()
@@ -107,9 +122,23 @@ end
 function love.draw()
 	local sct = { string.format("%d", score[1]), string.format("%d", score[2]) }
 	local f = love.graphics.getFont()
+	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.print(sct[1], w/2 - f:getWidth(sct[1]), 10)
 	love.graphics.print(sct[2], w/2 + f:getWidth(sct[2]), 10)
 	love.graphics.rectangle("fill", padleft.pos.x, padleft.pos.y, padleft.size.x, padleft.size.y)
 	love.graphics.rectangle("fill", padright.pos.x, padright.pos.y, padright.size.x, padright.size.y)
 	love.graphics.rectangle("fill", ball.pos.x, ball.pos.y, ball.size.x, ball.size.y)
+	
+	local ballCenter = ball.pos + 0.5 * ball.size
+	local length = 30
+	love.graphics.setColor(255, 0, 0, 255)
+	love.graphics.line(ballCenter.x, ballCenter.y,
+		ballCenter.x + length * ball.dir.x,
+		ballCenter.y + length * ball.dir.y)
+	if reflectVec then
+		love.graphics.setColor(0, 255, 0, 255)
+		love.graphics.line(ballCenter.x, ballCenter.y,
+			ballCenter.x + length * reflectVec.x,
+			ballCenter.y + length * reflectVec.y)
+	end
 end
