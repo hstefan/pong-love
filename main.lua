@@ -10,10 +10,11 @@ local function initBall()
 	ball.speed = 700
 end
 
-local function initPaddle(paddle, offset)
+local function initPaddle(paddle, offset, normal)
 	paddle.size = vector(30, 120)
 	paddle.pos = vector(0, h / 2 - paddle.size.y / 2) + offset
-	paddle.maxSpeed = 400
+	paddle.maxSpeed = 800
+	paddle.normal = normal
 end
 
 local function resetPads()
@@ -21,8 +22,8 @@ local function resetPads()
 	initBall()
 	padleft = {}
 	padright = {}
-	initPaddle(padleft, vector(0, 0))
-	initPaddle(padright, vector(w - 30, 0))
+	initPaddle(padleft, vector(0, 0), vector(1, 0))
+	initPaddle(padright, vector(w - 30, 0), vector(-1, 0))
 end
 
 local function clamp(v, l, r)
