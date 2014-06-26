@@ -9,3 +9,7 @@ function love.load()
 	gamestate.registerEvents()
 	gamestate.switch(menu)
 end
+
+function love.quit() 
+	print("Bye!")
+end

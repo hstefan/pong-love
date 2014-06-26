@@ -4,6 +4,7 @@ local states = require "states"
 states.menu = menu
 local gamestate = require "hump.gamestate"
 local fonts = require "fonts"
+local shapes = require "shapes"
 
 menu.selected = { "js", "kb" }
 
@@ -46,8 +47,13 @@ function menu:draw()
 
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(fonts.big)
-	love.graphics.print("QUIT", menu.window.w * 0.5 - fonts.big:getWidth("QUIT") * 0.5,
-		menu.window.h - fonts.big:getHeight())
+	
+	local quitMsg = "QUIT"
+	menu.quitRect = { x = menu.window.w * 0.5 - fonts.big:getWidth(quitMsg) * 0.5,
+		y = menu.window.h - fonts.big:getHeight(quitMsg),
+		w = fonts.big:getWidth(quitMsg),
+		h = fonts.big:getHeight(quitMsg)}
+	love.graphics.print(quitMsg, menu.quitRect.x, menu.quitRect.y)
 end
 
 function menu:keyreleased(key, code)
@@ -57,6 +63,14 @@ function menu:keyreleased(key, code)
 end
 
 function menu:update(dt)
+end
+
+function menu:mousereleased(x, y, mouseBtn)
+	if mouseBtn == "l" then
+		if shapes.pointInRect({ x = x, y = y }, menu.quitRect) then
+			love.event.push("quit")
+		end
+	end
 end
 
 return menu
