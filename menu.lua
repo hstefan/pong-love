@@ -16,12 +16,13 @@ local function drawControlsBox(center, playerId, numPlayers)
 	local playerStr = string.format("P%d", playerId + 1)
 	local baseY = 180 + 0.5 * (playerId + 1) * numPlayers * fonts.small:getHeight(playerStr) + playerId * 20
 	local xi, xf = 30, menu.window.w - (fonts.small:getWidth(joystickMsg) + 30)
-	local xm = 0.5 * ((xi + fonts.small:getWidth(playerStr)) + xf)
-
+	local xm = 0.5 * ((xi + fonts.small:getWidth(playerStr)) + xf) - 0.5 * fonts.small:getWidth(keyboardMsg)
+	local maxWidth = math.max(fonts.small:getWidth(joystickMsg), fonts.small:getWidth(keyboardMsg))
 	love.graphics.setFont(fonts.small)
 	love.graphics.print(playerStr, xi, baseY)
-	love.graphics.print(keyboardMsg, xm - 0.5 * fonts.small:getWidth(keyboardMsg), baseY)
+	love.graphics.print(keyboardMsg, xm, baseY)
 	love.graphics.print(joystickMsg, xf, baseY)
+	love.graphics.rectangle("fill", xm, baseY + fonts.small:getHeight(playerStr), maxWidth, 4)
 end
 
 function menu:draw()
