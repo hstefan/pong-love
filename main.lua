@@ -2,9 +2,10 @@ local gamestate = require "hump.gamestate"
 local states = require "states"
 local game = require "game"
 local menu = require "menu"
+local fonts = require "fonts"
 
 function love.load()
-	love.graphics.setNewFont("data/slkscre.ttf", 64)
+	fonts.load()
 	gamestate.registerEvents()
 	gamestate.switch(menu)
 end
