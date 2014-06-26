@@ -12,7 +12,7 @@ end
 function menu:draw()
 	local f = love.graphics.getFont()
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.print("PAUSED", menu.window.w/2 - f:getWidth("PAUSED")/2, 80)
+	love.graphics.print("PAUSED", menu.window.w/2 - f:getWidth("PAUSED")/2, 30)
 end
 
 function menu:keyreleased(key, code)
