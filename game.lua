@@ -6,6 +6,7 @@ states.game = game
 local vector = require "hump.vector"
 local shapes = require "shapes"
 local gamestate = require "hump.gamestate"
+local fonts = require "fonts"
 
 local score = { 0, 0 }
 
@@ -114,6 +115,7 @@ function drawAll()
 	local sct = { string.format("%d", score[1]), string.format("%d", score[2]) }
 	local f = love.graphics.getFont()
 	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setFont(fonts.big)
 	love.graphics.print(sct[1], w/2 - f:getWidth(sct[1]), 10)
 	love.graphics.print(sct[2], w/2 + f:getWidth(sct[2]), 10)
 	love.graphics.rectangle("fill", padleft.pos.x, padleft.pos.y, padleft.size.x, padleft.size.y)
