@@ -7,6 +7,7 @@ local fonts = require "fonts"
 local shapes = require "shapes"
 
 menu.selected = { "js", "kb" }
+local controlsRects = {}
 
 function menu:init()
 	menu.window = {}
@@ -32,6 +33,16 @@ local function drawControlsBox(center, playerId, numPlayers)
 	if menu.selected[playerId] == "js" then
 		selCenter = xf + fonts.small:getWidth(joystickMsg)/2
 	end
+
+	controlsRects[playerId] = {}
+	controlsRects[playerId].keyboardRect = { x = xm, y = baseY,
+		w = fonts.small:getWidth(keyboardMsg),
+		h = fonts.small:getHeight(keyboardMsg)
+	}
+	controlsRects[playerId].joystickRect = { x = xf, y = baseY,
+		w = fonts.small:getWidth(joystickMsg),
+		h = fonts.small:getHeight(joystickMsg)
+	}
 
 	love.graphics.rectangle("fill", selCenter - selWidth/2, baseY + selHeight, selWidth, 4)
 end
@@ -67,9 +78,19 @@ end
 
 function menu:mousereleased(x, y, mouseBtn)
 	if mouseBtn == "l" then
-		if shapes.pointInRect({ x = x, y = y }, menu.quitRect) then
+		local pt = { x = x, y = y }
+		if shapes.pointInRect(pt, menu.quitRect) then
 			love.event.push("quit")
 		end
+		for i = 1,2 do
+			if shapes.pointInRect(pt, controlsRects[i].keyboardRect) then
+				menu.selected[i] = "kb"
+			end
+			if shapes.pointInRect(pt, controlsRects[i].joystickRect) then
+				menu.selected[i] = "js"
+			end
+		end
+		
 	end
 end
 
