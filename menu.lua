@@ -6,7 +6,7 @@ local gamestate = require "hump.gamestate"
 local fonts = require "fonts"
 local shapes = require "shapes"
 
-menu.selected = { "js", "kb" }
+menu.selectedInput = { "js", "kb" }
 local controlsRects = {}
 
 function menu:init()
@@ -30,7 +30,7 @@ local function drawControlsBox(center, playerId, numPlayers)
 	local selHeight = math.max(fonts.small:getHeight(keyboardMsg), fonts.small:getHeight(joystickMsg))
 	local selWidth = math.max(fonts.small:getWidth(keyboardMsg), fonts.small:getWidth(joystickMsg))
 	local selCenter = xm + fonts.small:getWidth(keyboardMsg)/2
-	if menu.selected[playerId] == "js" then
+	if menu.selectedInput[playerId] == "js" then
 		selCenter = xf + fonts.small:getWidth(joystickMsg)/2
 	end
 
@@ -84,10 +84,10 @@ function menu:mousereleased(x, y, mouseBtn)
 		end
 		for i = 1,2 do
 			if shapes.pointInRect(pt, controlsRects[i].keyboardRect) then
-				menu.selected[i] = "kb"
+				menu.selectedInput[i] = "kb"
 			end
 			if shapes.pointInRect(pt, controlsRects[i].joystickRect) then
-				menu.selected[i] = "js"
+				menu.selectedInput[i] = "js"
 			end
 		end
 		
