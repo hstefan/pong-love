@@ -138,7 +138,7 @@ function drawAll()
 	end
 end
 
-function game.reset() 
+function game.reset()
 	score = { 0, 0 }
 	resetPads()
 end
