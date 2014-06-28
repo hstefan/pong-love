@@ -121,4 +121,10 @@ function menu:mousereleased(x, y, mouseBtn)
 	end
 end
 
+function menu:joystickreleased(joystick, button)
+	if button == 8 then
+		gamestate.switch(states.game)
+	end
+end
+
 return menu

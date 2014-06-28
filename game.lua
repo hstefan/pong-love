@@ -156,6 +156,12 @@ function game:update(dt)
 	updateScore()
 end
 
+function game:joystickreleased(joystick, button)
+	if button == 8 then
+		gamestate.switch(states.menu)
+	end
+end
+
 function game:keyreleased(key, code)
 	if key == 'escape' then
 		gamestate.switch(states.menu)
