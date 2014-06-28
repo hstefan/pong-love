@@ -58,15 +58,20 @@ local function updateBall(dt)
 	local ballRect = { x = ball.pos.x, y = ball.pos.y, w = ball.size.x, h = ball.size.y }
 	local leftPaddleRect = { x = padleft.pos.x, y = padleft.pos.y, w = padleft.size.x, h = padleft.size.y }
 	local rightPaddleRect = { x = padright.pos.x, y = padright.pos.y, w = padright.size.x, h = padright.size.y }
+	local oldDir = ball.dir
 	if #(shapes.rectInRect(leftPaddleRect, ballRect)) > 0 then
 		ball.dir = reflectedDir(padleft)
 		local rightBorder = leftPaddleRect.x + 1.05 * leftPaddleRect.w
 		ball.pos.x = ball.pos.x + (rightBorder - ball.pos.x)
+		pongClip:setPitch(math.abs(oldDir.x/ball.dir.x))
+		pongClip:play()
 	elseif #(shapes.rectInRect(rightPaddleRect, ballRect)) > 0 then
 		ball.dir = reflectedDir(padright)
 		local rightSideBall = ball.pos.x + ball.size.x
 		local leftPaddleBorder = rightPaddleRect.x - rightPaddleRect.w * 0.05
 		ball.pos.x = ball.pos.x - (rightSideBall - leftPaddleBorder)
+		pongClip:setPitch(math.abs(oldDir.x/ball.dir.x))
+		pongClip:play()
 	elseif ball.pos.y < 0 or ball.pos.y > h - ball.size.y then
 		ball.dir.y = -ball.dir.y
 	end
@@ -143,8 +148,9 @@ function game.reset()
 	resetPads()
 end
 
-function game:init() 
+function game:init()
 	math.randomseed(os.time())
+	pongClip = love.audio.newSource('data/pong.ogg', 'static')
 	game.reset()
 end
 
