@@ -3,6 +3,7 @@ local states = require "states"
 local game = require "game"
 local menu = require "menu"
 local fonts = require "fonts"
+local inputs = require "inputs"
 
 function love.load()
 	fonts.load()
@@ -10,6 +11,6 @@ function love.load()
 	gamestate.switch(menu)
 end
 
-function love.quit() 
+function love.quit()
 	print("Bye!")
 end

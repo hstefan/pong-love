@@ -5,9 +5,18 @@ states.menu = menu
 local gamestate = require "hump.gamestate"
 local fonts = require "fonts"
 local shapes = require "shapes"
+local inputs = require "inputs"
 
-menu.selectedInput = { "js", "kb" }
 local controlsRects = {}
+
+function table.contains(table, elem)
+	for _, val in pairs(table) do
+		if val == elem then
+			return true
+		end
+	end
+	return false
+end
 
 function menu:init()
 	menu.window = {}
@@ -25,12 +34,18 @@ local function drawControlsBox(center, playerId, numPlayers)
 	love.graphics.setFont(fonts.small)
 	love.graphics.print(playerStr, xi, baseY)
 	love.graphics.print(keyboardMsg, xm, baseY)
+	
+	if not inputs.joystickAllowed(playerId) then
+		love.graphics.setColor(120, 120, 120, 255)
+	end
+	
 	love.graphics.print(joystickMsg, xf, baseY)
+	love.graphics.setColor(255, 255, 255, 255)
 
 	local selHeight = math.max(fonts.small:getHeight(keyboardMsg), fonts.small:getHeight(joystickMsg))
 	local selWidth = math.max(fonts.small:getWidth(keyboardMsg), fonts.small:getWidth(joystickMsg))
 	local selCenter = xm + fonts.small:getWidth(keyboardMsg)/2
-	if menu.selectedInput[playerId] == "js" then
+	if inputs.selected[playerId] == "js" then
 		selCenter = xf + fonts.small:getWidth(joystickMsg)/2
 	end
 
@@ -74,6 +89,16 @@ function menu:keyreleased(key, code)
 end
 
 function menu:update(dt)
+	for i = 1, 2 do
+		if inputs.joystickAllowed(i) then
+			local axis = inputs.jsData[i].js:getAxis(1)
+			if axis > 0.5 then
+				inputs.selected[i] = "js"
+			elseif axis < -0.5 then
+				inputs.selected[i] = "kb"
+			end
+		end
+	end
 end
 
 function menu:mousereleased(x, y, mouseBtn)
@@ -84,10 +109,12 @@ function menu:mousereleased(x, y, mouseBtn)
 		end
 		for i = 1,2 do
 			if shapes.pointInRect(pt, controlsRects[i].keyboardRect) then
-				menu.selectedInput[i] = "kb"
+				inputs.selected[i] = "kb"
 			end
-			if shapes.pointInRect(pt, controlsRects[i].joystickRect) then
-				menu.selectedInput[i] = "js"
+			if inputs.joystickAllowed(i) then
+				if shapes.pointInRect(pt, controlsRects[i].joystickRect) then
+					inputs.selected[i] = "js"
+				end
 			end
 		end
 		

@@ -7,6 +7,7 @@ local vector = require "hump.vector"
 local shapes = require "shapes"
 local gamestate = require "hump.gamestate"
 local fonts = require "fonts"
+local inputs = require "inputs"
 
 local score = { 0, 0 }
 
@@ -93,8 +94,8 @@ local function handleKeyboard(v, pos, neg, sc, dt)
 	end
 end
 
-local function handleJoystick(device, v, sc, dt)
-	local axis = device:getAxis(2)
+local function handleJoystick(id, v, sc, dt)
+	local axis = inputs.jsData[id].js:getAxis(2)
 	if math.abs(axis) < 0.4 then
 		return v
 	else
@@ -102,12 +103,13 @@ local function handleJoystick(device, v, sc, dt)
 	end
 end
 
-local function setupInputMethods()
+function game:enter()
 	padHandlers = { function(y, spd, dt) return handleKeyboard(y, "down", "up", spd, dt) end,
 		function(y, spd, dt) return handleKeyboard(y, "r", "w", spd, dt) end }
-	joysticks = love.joystick.getJoysticks()
-	for k, v in ipairs(joysticks) do
-		padHandlers[k] = function(y, spd, dt) return handleJoystick(joysticks[k], y, spd, dt) end
+	for k, v in ipairs(inputs.selected) do
+		if v == "js" then
+			padHandlers[k] = function(y, spd, dt) return handleJoystick(k, y, spd, dt) end
+		end
 	end
 end
 
@@ -139,7 +141,6 @@ end
 function game:init() 
 	math.randomseed(os.time())
 	resetPads()
-	setupInputMethods()
 end
 
 function game:draw()
