@@ -138,9 +138,14 @@ function drawAll()
 	end
 end
 
+function game.reset() 
+	score = { 0, 0 }
+	resetPads()
+end
+
 function game:init() 
 	math.randomseed(os.time())
-	resetPads()
+	game.reset()
 end
 
 function game:draw()

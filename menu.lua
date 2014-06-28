@@ -6,6 +6,7 @@ local gamestate = require "hump.gamestate"
 local fonts = require "fonts"
 local shapes = require "shapes"
 local inputs = require "inputs"
+local game = require "game"
 
 local controlsRects = {}
 
@@ -74,6 +75,13 @@ function menu:draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(fonts.big)
 	
+	local restartMsg = "RESTART"
+	menu.restartRect = { x = menu.window.w * 0.5 - fonts.big:getWidth(restartMsg) * 0.5,
+		y = menu.window.h - 2 * fonts.big:getHeight(restartMsg),
+		w = fonts.big:getWidth(restartMsg),
+		h = fonts.big:getHeight(restartMsg)}
+	love.graphics.print(restartMsg, menu.restartRect.x, menu.restartRect.y)
+	
 	local quitMsg = "QUIT"
 	menu.quitRect = { x = menu.window.w * 0.5 - fonts.big:getWidth(quitMsg) * 0.5,
 		y = menu.window.h - fonts.big:getHeight(quitMsg),
@@ -106,6 +114,9 @@ function menu:mousereleased(x, y, mouseBtn)
 		local pt = { x = x, y = y }
 		if shapes.pointInRect(pt, menu.quitRect) then
 			love.event.push("quit")
+		end
+		if shapes.pointInRect(pt, menu.restartRect) then
+			game.reset()
 		end
 		for i = 1,2 do
 			if shapes.pointInRect(pt, controlsRects[i].keyboardRect) then
