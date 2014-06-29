@@ -57,7 +57,22 @@ local function reflectedDir(paddle)
 	local normal = vector(-a * math.cos(t), paddle.normal.x * -b * math.sin(t))
 	local cosTheta = ball.dir * -normal
 	local reflected = (ball.dir + 2 * cosTheta * normal):normalize_inplace()
-	return reflected
+	
+	local absReflec = vector(math.abs(reflected.x), math.abs(reflected.y))
+	local theta = absReflec:angleTo(vector(1, 0))
+	local iota = 1.36
+	if theta > iota then
+		local clamped = vector(math.cos(iota), math.sin(iota))
+		if reflected.x < 0 then
+			clamped.x = -clamped.x
+		end
+		if reflected.y < 0 then
+			clamped.y = -clamped.y
+		end
+		reflected = clamped
+	end
+	
+	return reflected:normalize_inplace()
 end
 
 local function updateBall(dt)
