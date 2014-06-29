@@ -47,11 +47,15 @@ local function resetPads()
 end
 
 local function reflectedDir(paddle)
-	local mul = -1
-	local yBallOrig = ball.pos.y - paddle.pos.y
-	local yRel = clamp(yBallOrig/paddle.size.y - 0.5, -0.5, 0.5)
-	mul = mul - yRel
-	return vector(mul * ball.dir.x, ball.dir.y):normalize_inplace()
+	-- I wasn't on crack, http://en.wikipedia.org/wiki/Snell%27s_law#Vector_form
+	local maxIota = 0.61 --radian for 35 degrees
+	local yRel = (ball.pos.y - paddle.pos.y) / paddle.size.y - 0.5
+	local iota = yRel * maxIota
+	local r = yRel/0.5
+	local c = -paddle.normal * ball.dir
+	local vrefrac = r * ball.dir + (r * c - math.sqrt(1 - (r * r) * (1 - c*c))) * paddle.normal
+	local cosTheta = vrefrac * -paddle.normal
+	return (vrefrac + 2 * cosTheta * paddle.normal):normalize_inplace()
 end
 
 local function updateBall(dt)
