@@ -72,7 +72,11 @@ local function updateBall(dt)
 		ball.pos.x = ball.pos.x - (rightSideBall - leftPaddleBorder)
 		pongClip:setPitch(math.abs(oldDir.x/ball.dir.x))
 		pongClip:play()
-	elseif ball.pos.y < 0 or ball.pos.y > h - ball.size.y then
+	elseif ball.pos.y < 0 then
+		ball.pos.y = 0.05 * ball.size.y
+		ball.dir.y = -ball.dir.y
+	elseif ball.pos.y > h - ball.size.y then
+		ball.pos.y = h - 1.05 * ball.size.y
 		ball.dir.y = -ball.dir.y
 	end
 	ball.pos = ball.pos + dt * ball.speed * ball.dir
