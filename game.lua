@@ -54,7 +54,7 @@ local function reflectedDir(paddle)
 	--obtain tangents from dx/dt = a * -sin(t) and dy/dt = b * cos(t)
 	--obtain normals using (x, y) => (y, -x)
 	local a, b = 1.5, 0.8
-	local normal = paddle.normal.x * vector(-a * math.cos(t), -b * math.sin(t))
+	local normal = vector(-a * math.cos(t), paddle.normal.x * -b * math.sin(t))
 	local cosTheta = ball.dir * -normal
 	local reflected = (ball.dir + 2 * cosTheta * normal):normalize_inplace()
 	return reflected
