@@ -153,19 +153,6 @@ function drawAll()
 	love.graphics.rectangle("fill", padleft.pos.x, padleft.pos.y, padleft.size.x, padleft.size.y)
 	love.graphics.rectangle("fill", padright.pos.x, padright.pos.y, padright.size.x, padright.size.y)
 	love.graphics.rectangle("fill", ball.pos.x, ball.pos.y, ball.size.x, ball.size.y)
-
-	local ballCenter = ball.pos + 0.5 * ball.size
-	local length = 30
-	love.graphics.setColor(255, 0, 0, 255)
-	love.graphics.line(ballCenter.x, ballCenter.y,
-		ballCenter.x + length * ball.dir.x,
-		ballCenter.y + length * ball.dir.y)
-	if reflectVec then
-		love.graphics.setColor(0, 255, 0, 255)
-		love.graphics.line(ballCenter.x, ballCenter.y,
-			ballCenter.x + length * reflectVec.x,
-			ballCenter.y + length * reflectVec.y)
-	end
 end
 
 function game.reset()
