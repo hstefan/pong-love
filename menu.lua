@@ -81,7 +81,7 @@ function menu:draw()
 		w = fonts.big:getWidth(restartMsg),
 		h = fonts.big:getHeight(restartMsg)}
 	love.graphics.print(restartMsg, menu.restartRect.x, menu.restartRect.y)
-	
+
 	local quitMsg = "QUIT"
 	menu.quitRect = { x = menu.window.w * 0.5 - fonts.big:getWidth(quitMsg) * 0.5,
 		y = menu.window.h - fonts.big:getHeight(quitMsg),
@@ -92,7 +92,7 @@ end
 
 function menu:keyreleased(key, code)
 	if key == 'escape' then
-		gamestate.switch(states.game)
+		gamestate.switch(states.resuming)
 	end
 end
 
@@ -117,6 +117,7 @@ function menu:mousereleased(x, y, mouseBtn)
 		end
 		if shapes.pointInRect(pt, menu.restartRect) then
 			game.reset()
+			gamestate.switch(states.resuming)
 		end
 		for i = 1,2 do
 			if shapes.pointInRect(pt, controlsRects[i].keyboardRect) then
@@ -134,7 +135,7 @@ end
 
 function menu:joystickreleased(joystick, button)
 	if button == 8 then
-		gamestate.switch(states.game)
+		gamestate.switch(states.resuming)
 	end
 end
 

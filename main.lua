@@ -2,6 +2,7 @@ local gamestate = require "hump.gamestate"
 local states = require "states"
 local game = require "game"
 local menu = require "menu"
+local resuming = require "resuming"
 local fonts = require "fonts"
 local inputs = require "inputs"
 
