@@ -47,8 +47,14 @@ local function resetPads()
 end
 
 local function reflectedDir(paddle)
-	local yRel = 2 * (((ball.pos.y - paddle.pos.y) / paddle.size.y) - 0.5)
-	local normal = paddle.normal:rotated(-math.pi/6 * yRel)
+	--calculate normalized relative Y collision unit
+	local t = clamp(2 * (((ball.pos.y - paddle.pos.y) / paddle.size.y) - 0.5), -1, 1)
+	--extracting normals from ellipse's parametric equation
+	--x(t) = a * cos(t), y(t) = b * sin(t)
+	--obtain tangents from dx/dt = a * -sin(t) and dy/dt = b * cos(t)
+	--obtain normals using (x, y) => (y, -x)
+	local a, b = 1.5, 0.8
+	local normal = paddle.normal.x * vector(-a * math.cos(t), -b * math.sin(t))
 	local cosTheta = ball.dir * -normal
 	local reflected = (ball.dir + 2 * cosTheta * normal):normalize_inplace()
 	return reflected
