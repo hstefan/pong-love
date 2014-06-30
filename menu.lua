@@ -67,6 +67,10 @@ function menu:draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(fonts.big)
 	love.graphics.print("PAUSED", menu.window.w/2 - fonts.big:getWidth("PAUSED")/2, 30)
+	love.graphics.setFont(fonts.tiny)
+	local resumeMsg = "START/ESC TO RESUME"
+	love.graphics.print(resumeMsg, menu.window.w/2 - fonts.tiny:getWidth(resumeMsg)/2, 30 +
+		fonts.big:getHeight("PAUSED"))
 
 	local center = { x = menu.window.w * 0.5, y = menu.window.h * 0.5 }
 	drawControlsBox(center, 1, 2)
