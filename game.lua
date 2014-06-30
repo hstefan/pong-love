@@ -63,9 +63,7 @@ local function reflectedDir(paddle)
 	local iota = 1.36
 	if theta > iota then
 		local clamped = vector(math.cos(iota), math.sin(iota))
-		if reflected.x < 0 then
-			clamped.x = -clamped.x
-		end
+		clamped.x = clamped.x * paddle.normal.x
 		if reflected.y < 0 then
 			clamped.y = -clamped.y
 		end
