@@ -133,7 +133,7 @@ end
 
 function game:enter()
 	padHandlers = { function(y, spd, dt) return handleKeyboard(y, "down", "up", spd, dt) end,
-		function(y, spd, dt) return handleKeyboard(y, "r", "w", spd, dt) end }
+		function(y, spd, dt) return handleKeyboard(y, "s", "w", spd, dt) end }
 	for k, v in ipairs(inputs.selected) do
 		if v == "js" then
 			padHandlers[k] = function(y, spd, dt) return handleJoystick(k, y, spd, dt) end
