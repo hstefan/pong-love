@@ -5,6 +5,6 @@ mv pong.love redist/pong
 cd redist/pong
 cat love.exe pong.love > Pong.exe
 cd ..
-zip -r pong.zip pong
+zip -r pong.zip pong -x pong/love.exe
 cp pong.zip ~/Copy/Share/.
 
