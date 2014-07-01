@@ -22,13 +22,15 @@ end
 function menu:init()
 	menu.window = {}
 	menu.window.w, menu.window.h = love.window.getDimensions()
+	game.difficulty = 2
+	difficultyRects = {}
 end
 
 local function drawControlsBox(center, playerId, numPlayers)
 	local keyboardMsg, joystickMsg = "KEYBOARD", "JOYSTICK"
 
 	local playerStr = string.format("P%d", playerId)
-	local baseY = 180 + 0.5 * playerId * numPlayers * fonts.small:getHeight(playerStr) + playerId * 20
+	local baseY = 130 + 0.5 * playerId * numPlayers * fonts.small:getHeight(playerStr) + playerId * 20
 	local xi, xf = 30, menu.window.w - (fonts.small:getWidth(joystickMsg) + 30)
 	local xm = 0.5 * ((xi + fonts.small:getWidth(playerStr)) + xf) - 0.5 * fonts.small:getWidth(keyboardMsg)
 	
@@ -63,6 +65,25 @@ local function drawControlsBox(center, playerId, numPlayers)
 	love.graphics.rectangle("fill", selCenter - selWidth/2, baseY + selHeight, selWidth, 4)
 end
 
+function drawDifficultyBox(center)
+	local msgs = { easy = "EASY", medium = "MEDIUM", hard = "HARD" }
+	love.graphics.setColor(255, 255, 255, 255)
+	local font = fonts.small
+	love.graphics.setFont(font)
+	local baseY = 380
+	local xi, xf = 30, menu.window.w - (font:getWidth(msgs.hard) + 30)
+	local xm = center.x - font:getWidth(msgs.medium)/2
+	local m = { { msg = msgs.easy, x = xi }, { msg = msgs.medium, x = xm }, { msg = msgs.hard, x = xf } }
+	for i, v in ipairs(m) do
+		love.graphics.setColor(120, 120, 120, 255)
+		if game.difficulty == i then
+			love.graphics.setColor(255, 255, 255, 255)
+		end
+		difficultyRects[i] = { x = v.x, y = baseY, w = font:getWidth(v.msg), h = font:getHeight(v.msg) }
+		love.graphics.print(v.msg, v.x, baseY)
+	end
+end
+
 function menu:draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(fonts.big)
@@ -76,9 +97,10 @@ function menu:draw()
 	drawControlsBox(center, 1, 2)
 	drawControlsBox(center, 2, 2)
 
+	drawDifficultyBox(center)
+
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(fonts.big)
-	
 	local restartMsg = "RESTART"
 	menu.restartRect = { x = menu.window.w * 0.5 - fonts.big:getWidth(restartMsg) * 0.5,
 		y = menu.window.h - 2 * fonts.big:getHeight(restartMsg),
@@ -133,7 +155,11 @@ function menu:mousereleased(x, y, mouseBtn)
 				end
 			end
 		end
-		
+		for i, v in pairs(difficultyRects) do
+			if shapes.pointInRect(pt, v) then
+				game.difficulty = i
+			end
+		end
 	end
 end
 

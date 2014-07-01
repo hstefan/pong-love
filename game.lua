@@ -98,7 +98,7 @@ local function updateBall(dt)
 		ball.pos.y = h - 1.05 * ball.size.y
 		ball.dir.y = -ball.dir.y
 	end
-	ball.pos = ball.pos + dt * ball.speed * ball.dir
+	ball.pos = ball.pos + dt * game.speedMul * ball.speed * ball.dir
 end
 
 local function updateScore()
@@ -139,6 +139,8 @@ function game:enter()
 			padHandlers[k] = function(y, spd, dt) return handleJoystick(k, y, spd, dt) end
 		end
 	end
+	local mulTable = { 0.5, 1, 1.5 }
+	game.speedMul = mulTable[game.difficulty]
 end
 
 function drawAll()
