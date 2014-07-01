@@ -139,7 +139,7 @@ function game:enter()
 			padHandlers[k] = function(y, spd, dt) return handleJoystick(k, y, spd, dt) end
 		end
 	end
-	local mulTable = { 0.5, 1, 1.5 }
+	local mulTable = { 0.5, 1, 1.25 }
 	game.speedMul = mulTable[game.difficulty]
 end
 
